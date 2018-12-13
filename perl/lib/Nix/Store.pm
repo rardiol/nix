@@ -14,7 +14,7 @@ our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 
 our @EXPORT = qw(
     setVerbosity
-    isValidPath queryReferences queryPathInfo queryDeriver queryPathHash
+    isValidPath queryReferences queryPathInfo queryPathInfoSigs queryDeriver queryPathHash
     queryPathFromHashPart
     topoSortPaths computeFSClosure followLinksToStorePath exportPaths importPaths
     hashPath hashFile hashString convertHash

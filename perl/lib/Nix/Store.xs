@@ -119,6 +119,30 @@ SV * queryPathInfo(char * path, int base32)
             croak("%s", e.what());
         }
 
+SV * queryPathInfoSigs(char * path, int base32)
+    PPCODE:
+        try {
+            auto info = store()->queryPathInfo(path);
+            if (info->deriver == "")
+                XPUSHs(&PL_sv_undef);
+            else
+                XPUSHs(sv_2mortal(newSVpv(info->deriver.c_str(), 0)));
+            auto s = info->narHash.to_string(base32 ? Base32 : Base16);
+            XPUSHs(sv_2mortal(newSVpv(s.c_str(), 0)));
+            mXPUSHi(info->registrationTime);
+            mXPUSHi(info->narSize);
+            AV * arr = newAV();
+            for (PathSet::iterator i = info->references.begin(); i != info->references.end(); ++i)
+                av_push(arr, newSVpv(i->c_str(), 0));
+            XPUSHs(sv_2mortal(newRV((SV *) arr)));
+            AV * arrs = newAV();
+            for (StringSet::iterator i = info->sigs.begin(); i != info->sigs.end(); ++i)
+                av_push(arrs, newSVpv(i->c_str(), 0));
+            XPUSHs(sv_2mortal(newRV((SV *) arrs)));
+        } catch (Error & e) {
+            croak("%s", e.what());
+        }
+
 
 SV * queryPathFromHashPart(char * hashPart)
     PPCODE:
